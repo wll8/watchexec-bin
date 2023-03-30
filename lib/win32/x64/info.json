@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "binFile": "lib\\win32\\x64\\file\\watchexec.EXE",
+  "file": {
+    "name": "watchexec-1.22.2-x86_64-pc-windows-msvc.zip",
+    "size": 2234589,
+    "browser_download_url": "https://github.com/watchexec/watchexec/releases/download/v1.22.2/watchexec-1.22.2-x86_64-pc-windows-msvc.zip",
+    "content_type": "application/zip"
+  },
+  "saveDir": "lib\\win32\\x64",
+  "downloadPath": "lib\\win32\\x64\\watchexec-1.22.2-x86_64-pc-windows-msvc.zip"
+}

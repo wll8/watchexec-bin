@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "binFile": "lib/linux/x64/file/watchexec",
+  "file": {
+    "name": "watchexec-1.22.2-x86_64-unknown-linux-musl.tar.xz",
+    "size": 2210240,
+    "browser_download_url": "https://github.com/watchexec/watchexec/releases/download/v1.22.2/watchexec-1.22.2-x86_64-unknown-linux-musl.tar.xz",
+    "content_type": "application/x-xz"
+  },
+  "saveDir": "lib/linux/x64",
+  "downloadPath": "lib/linux/x64/watchexec-1.22.2-x86_64-unknown-linux-musl.tar.xz"
+}

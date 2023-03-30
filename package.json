@@ -1,0 +1,25 @@
+{
+  "name": "@wll8/watchexec-bin",
+  "version": "1.0.0",
+  "description": "Automatically fetches the watchexec binary for the current platform.",
+  "main": "index.js",
+  "bin": {
+    "watchexec": "cli.js"
+  },
+  "scripts": {
+    "postinstall": "node postinstall.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "changes",
+    "listener",
+    "watcher",
+    "watchexec"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cur-env-bin": "^1.0.4",
+    "decompress": "^4.2.1"
+  }
+}
