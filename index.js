@@ -105,7 +105,8 @@ async function simpleEvent({root, path, type}) {
                 obj.action = `upload`
                 stats.isFile() && (obj.type = `file`)
                 stats.isDirectory() && (obj.type = `dir`)
-                if(type === `renamed` && obj.type === `dir`) {
+                // 由于无法正确判断文件夹变更(重命名), 所以所以变更都进行目录扫描
+                if(obj.type === `dir`) {
                   obj.action = `scan`
                 }
                 return resolve(obj)

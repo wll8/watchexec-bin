@@ -14,7 +14,8 @@ type
 
 const map = {
   'json-file'(cb){
-    const str = require(`fs`).readFileSync(process.env.WATCHEXEC_EVENTS_FILE, `utf-8`).trim()
+    const file = process.env.WATCHEXEC_EVENTS_FILE
+    const str = require(`fs`).readFileSync(file, `utf-8`).trim()
     const list = handleJsonStr(str)
     cb(list)
   },
@@ -41,6 +42,7 @@ const map = {
   'environment'(cb) {
     let obj = {}
     try {
+      let maxPath = ``
       obj = Object.entries(process.env).reduce((acc, [key, val]) => {
         if (val && key.startsWith(`WATCHEXEC_`)) {
           const keyKey = key.replace(/^WATCHEXEC_/, ``)
@@ -63,10 +65,24 @@ const map = {
           if(keyKey.startsWith(`OTHERWISE_CHANGED_`)) {
             acc.type = `otherwise_changed`
           }
-          acc.pathList = (val || ``).split(process.platform === `win32` ? `;` : `:`)
+          if(keyKey !== `COMMON_PATH` && keyKey.endsWith(`_PATH`) && (val.length > maxPath.length)) {
+           maxPath = val
+          }
         }
         return acc
       }, {})
+
+      /**
+       * 谁的路径多就取谁, 因为 env 中会存在多个 val 都有 path 的情况, 例如:
+       *  {
+       *    "COMMON_PATH": "/mnt/d/git2/watchexec-bin",
+       *    "RENAMED_PATH": "3:3 (2):4:4 (2)",
+       *    "type": "meta_changed",
+       *    "WRITTEN_PATH": ":4:4 (2)",
+       *    "META_CHANGED_PATH": ":4:4 (2)"
+       *  }
+      */
+      obj.pathList = (maxPath || ``).split(process.platform === `win32` ? `;` : `:`)
     } catch (error) {
       // ...
     }
@@ -82,15 +98,15 @@ function handleJsonStr(str) {
     const json = JSON.parse(`[${str.split(`\n`).join(`,`)}]`)
     const map = {}
     json.forEach(({tags = []}) => {
-      const [, {simple, full} = {}, {absolute, filetype} = {}] = tags
+      const { simple, full } = tags.find(tag => tag.kind === `fs`) || {}
+      const pathList = tags.filter(tag => tag.kind === `path`).map(({ absolute, filetype }) => ({ absolute, filetype }))
       const data = {
         full,
         simple,
-        absolute,
-        filetype,
+        pathList,
       }
       const key = JSON.stringify(data)
-      if(map[key] !== true && absolute) {
+      if(map[key] !== true && pathList.length) {
         list.push(data)
       }
       map[key] = true
