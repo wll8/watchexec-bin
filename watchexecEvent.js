@@ -13,33 +13,16 @@ type
   */
 
 const map = {
+  'json-file'(cb){
+    const str = require(`fs`).readFileSync(process.env.WATCHEXEC_EVENTS_FILE, `utf-8`).trim()
+    const list = handleJsonStr(str)
+    cb(list)
+  },
   'json-stdin'(cb) {
     process.stdin.on(`data`, data => {
-      let list = []
-      try {
-        const str = String(data).trim()
-        const json = JSON.parse(`[${str.split(`\n`).join(`,`)}]`)
-        const map = {}
-        json.forEach(({tags = []}) => {
-          const [, {simple, full} = {}, {absolute, filetype} = {}] = tags
-          const data = {
-            full,
-            simple,
-            absolute,
-            filetype,
-          }
-          const key = JSON.stringify(data)
-          if(map[key] !== true && absolute) {
-            list.push(data)
-          }
-          map[key] = true
-        })
-      } catch (error) {
-        // ...
-      }
-      if(list.length) {
-        cb(list)
-      }
+      const str = String(data).trim()
+      const list = handleJsonStr(str)
+      cb(list)
     })
 
   },
@@ -93,6 +76,40 @@ const map = {
   },
 }
 
+function handleJsonStr(str) {
+  let list = []
+  try {
+    const json = JSON.parse(`[${str.split(`\n`).join(`,`)}]`)
+    const map = {}
+    json.forEach(({tags = []}) => {
+      const [, {simple, full} = {}, {absolute, filetype} = {}] = tags
+      const data = {
+        full,
+        simple,
+        absolute,
+        filetype,
+      }
+      const key = JSON.stringify(data)
+      if(map[key] !== true && absolute) {
+        list.push(data)
+      }
+      map[key] = true
+    })
+  } catch (error) {
+    // ...
+  }
+  if(list.length) {
+    return list
+  }
+}
+
 map[process.argv[2]]((info) => {
   process.stdout.write(JSON.stringify(info, null, 2))
 })
+
+// {
+//   COMMON_PATH: 'D:\\git2\\watchexec-bin',
+//   pathList: [ 'util.js' ],
+//   OTHERWISE_CHANGED_PATH: 'util.js',
+//   type: 'otherwise_changed'
+// }

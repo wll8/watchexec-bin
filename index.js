@@ -36,7 +36,7 @@ async function getBin() {
  * @see https://github.com/watchexec/watchexec/tree/main/crates/cli
  */
 function watchFile({bin, arg, cwd}) {
-  const emitEventsTo = `environment` // json-stdin 
+  const emitEventsTo = `environment` // json-stdin json-file environment
   const bus = new util.PubSub()
   const argNew = [
     ...arg,
